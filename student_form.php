@@ -1,4 +1,54 @@
-<?php include("includes/a_config.php"); ?>
+<?php include("includes/a_config.php");
+
+
+session_start();
+
+$student = array(
+	'nombre' => "",
+	'apellido' => "",
+	'carrera' => "",
+	'isActive' => "",
+);
+
+//Editando
+if (isset($_GET['id'])) {
+	$id = $_GET['id'];
+	$PAGE_TITLE = "Edicion de Estudiante";
+
+	$students =  isset($_SESSION['studentList']) ? $_SESSION['studentList'] : array();
+
+	$student = $students[$id];
+
+}
+
+//Agrega el estudiante
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	# code...
+	$students =  isset($_SESSION['studentList']) ? $_SESSION['studentList'] : array();
+
+	$student = array(
+		'nombre' => $_POST['nombre'],
+		'apellido' => $_POST['apellido'],
+		'carrera' => $_POST['carrera'],
+		'isActive' => isset($_POST['isActive']) ? $_POST['isActive'] : "no",
+	);
+
+	print_r(isset($_POST['id']));
+
+	if(isset($_POST['id'])){
+		array_splice($students, $_POST['id'], 1, $student);
+	}else{
+		array_push($students, $student);
+	}
+
+	$_SESSION['studentList'] = $students;
+
+	//header("Location:student_form.php");
+}
+
+
+
+?>
 <!DOCTYPE html>
 <html>
 
@@ -10,15 +60,11 @@
 	<?php include("includes/design-top.php"); ?>
 
 	<div class="container mb-5">
-		<div class="d-block mb-3">
-			<a class="btn btn-link" href="index.php" role="button"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-90deg-left" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-					<path fill-rule="evenodd" d="M1.146 4.854a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H12.5A2.5 2.5 0 0 1 15 6.5v8a.5.5 0 0 1-1 0v-8A1.5 1.5 0 0 0 12.5 5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4z" />
-				</svg> Volver</a>
-		</div>
 		<h2 class="text-center"><?= $PAGE_TITLE; ?></h2>
-		<form>
+		<form action="student_form.php" method="post">
+			<input type="hidden" name="id" value="<?=$id;?>">
 			<div class="form-group">
-				<label for="Nombre">Nombre *</label>
+				<label for="nombre">Nombre *</label>
 				<div class="input-group">
 					<div class="input-group-prepend">
 						<div class="input-group-text">
@@ -27,7 +73,7 @@
 							</svg>
 						</div>
 					</div>
-					<input id="Nombre" name="Nombre" placeholder="Escribir aquí..." type="text" required="required" class="form-control">
+					<input id="nombre" name="nombre" placeholder="Escribir aquí..." type="text" required="required" class="form-control" value="<?= $student['nombre'];?>" />
 				</div>
 			</div>
 			<div class="form-group">
@@ -40,32 +86,35 @@
 							</svg>
 						</div>
 					</div>
-					<input id="apellido" name="apellido" placeholder="Escribir aquí..." type="text" class="form-control" required="required">
+					<input id="apellido" name="apellido" placeholder="Escribir aquí..." type="text" class="form-control" required="required" value="<?= $student['apellido'];?>">
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="carrera">Carrera *</label>
 				<div>
 					<select id="carrera" name="carrera" class="custom-select" required="required">
-						<option value="" selected disabled>Seleccione una carrera...</option>
-						<option value="0">Redes</option>
-						<option value="1">Software</option>
-						<option value="2">Multimedia</option>
-						<option value="3">Mecatronica</option>
-						<option value="4">Seguridad informática</option>
+						<option value="" <?=empty($student['carrera']) ? "selected" : "";?> disabled>Seleccione una carrera...</option>
+						<option value="Redes" <?=$student['carrera'] == 'Redes' ? ' selected': '';?>>Redes</option>
+						<option value="Software" <?=$student['carrera'] == 'Software' ? ' selected': '';?>>Software</option>
+						<option value="Multimedia" <?=$student['carrera'] == 'Multimedia' ? ' selected': '';?>>Multimedia</option>
+						<option value="Mecatronica" <?=$student['carrera'] == 'Mecatronica' ? ' selected': '';?>>Mecatronica</option>
+						<option value="Seguridad informática" <?=$student['carrera'] == 'Seguridad informática' ? ' selected': '';?>>Seguridad informática</option>
 					</select>
 				</div>
 			</div>
 			<div class="form-group">
 				<div>
 					<div class="custom-control custom-checkbox custom-control-inline">
-						<input name="isActive" id="isActive_0" type="checkbox" class="custom-control-input" value="si">
+						<input name="isActive" id="isActive_0" type="checkbox" class="custom-control-input" value="si" <?=$student['isActive'] == 'si' ? ' checked': '';?>>
 						<label for="isActive_0" class="custom-control-label">Esta activo</label>
 					</div>
 				</div>
 			</div>
-			<div class="form-group">
-				<button name="submit" type="submit" class="btn btn-primary">Agregar</button>
+			<div class="form-group text-center">
+				<button type="submit" class="btn btn-primary"><?= isset($_GET['id']) ? "Guardar cambios" : "Agregar"; ?></button>
+
+					<a class="btn btn-danger" href="index.php" role="button"><?= isset($_GET['id']) ? "Cancelar" : "Volver"; ?></a>
+
 			</div>
 		</form>
 	</div>

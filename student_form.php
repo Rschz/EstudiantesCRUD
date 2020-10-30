@@ -33,17 +33,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		'isActive' => isset($_POST['isActive']) ? $_POST['isActive'] : "no",
 	);
 
-	print_r(isset($_POST['id']));
+	print_r($_POST);
 
-	if(isset($_POST['id'])){
-		array_splice($students, $_POST['id'], 1, $student);
+	if(isset($_POST['id']) && !empty($_POST['id'])){
+		$students[$_POST['id']] = $student;
 	}else{
 		array_push($students, $student);
 	}
 
 	$_SESSION['studentList'] = $students;
 
-	//header("Location:student_form.php");
+	header("Location:student_form.php");
 }
 
 
@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	<div class="container mb-5">
 		<h2 class="text-center"><?= $PAGE_TITLE; ?></h2>
 		<form action="student_form.php" method="post">
-			<input type="hidden" name="id" value="<?=$id;?>">
+			<input type="hidden" name="id" value="<?=isset($_GET['id'])? $_GET['id']: "";?>">
 			<div class="form-group">
 				<label for="nombre">Nombre *</label>
 				<div class="input-group">

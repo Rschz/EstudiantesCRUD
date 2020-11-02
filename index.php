@@ -13,16 +13,17 @@ if (isset($_GET['id'])) {
 }
 
 //filtra los estudiantes
-if (isset($_GET['search'])) {
+if (isset($_GET['flCarrera'])) {
 
-
-	function FilterByCarrera($carre)
-	{
-		$carrera = $_GET['search'];
-		return ($carrera == $carre);
+	if ($_GET['flCarrera'] == "todas") {
+		header('Location:index.php');
 	}
-}
 
+	$flStudentList = array_filter($_SESSION['studentList'], function ($e) {
+		return $e['carrera'] == $_GET['flCarrera'];
+	});
+	$students = $flStudentList;
+}
 
 ?>
 
@@ -43,8 +44,16 @@ if (isset($_GET['search'])) {
 				</svg> Agregar Nuevo</a>
 
 			<form class="form-inline" action="index.php" method="get">
-				<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search">
-				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+				<select id="flCarrera" name="flCarrera" class="custom-select" required="required">
+					<option value="" <?= !isset($_GET['flCarrera']) ? "selected " : ""; ?> disabled>Carrera...</option>
+					<option value="todas" >Todas</option>
+					<option value="Redes" <?= (isset($_GET['flCarrera']) && $_GET['flCarrera'] == 'Redes') ? ' selected' : ''; ?>>Redes</option>
+					<option value="Software" <?= (isset($_GET['flCarrera']) && $_GET['flCarrera'] == 'Software') ? ' selected' : ''; ?>>Software</option>
+					<option value="Multimedia" <?= (isset($_GET['flCarrera']) && $_GET['flCarrera'] == 'Multimedia') ? ' selected' : ''; ?>>Multimedia</option>
+					<option value="Mecatronica" <?= (isset($_GET['flCarrera']) && $_GET['flCarrera'] == 'Mecatronica') ? ' selected' : ''; ?>>Mecatronica</option>
+					<option value="Seguridad informática" <?= (isset($_GET['flCarrera']) && $_GET['flCarrera'] == 'Seguridad informática') ? ' selected' : ''; ?>>Seguridad informática</option>
+				</select>
+				<button class="btn btn-primary my-2 my-sm-0" type="submit">Filtrar</button>
 			</form>
 		</div>
 		<table class="table table-borderless table-hover">

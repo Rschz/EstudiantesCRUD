@@ -16,7 +16,6 @@ if (isset($_GET['id'])) {
 	$PAGE_TITLE = "Edicion de Estudiante";
 
 	$students =  isset($_SESSION['studentList']) ? $_SESSION['studentList'] : array();
-
 	$student = $students[$id];
 
 }
@@ -33,8 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		'isActive' => isset($_POST['isActive']) ? $_POST['isActive'] : "no",
 	);
 
-	print_r($_POST);
-
 	if(isset($_POST['id']) && !empty($_POST['id'])){
 		$students[$_POST['id']] = $student;
 	}else{
@@ -43,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 	$_SESSION['studentList'] = $students;
 
-	header("Location:student_form.php");
+	header("Location:index.php");
 }
 
 
